@@ -19,3 +19,5 @@ src/config/pinDict.json
 
 # Seed Scripts
 seeds
+
+dist

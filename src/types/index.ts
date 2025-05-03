@@ -1,5 +1,5 @@
-import { tokenTypes } from '@/config/tokens';
-import { Model } from 'mongoose';
+import type { tokenTypes } from "@/config/tokens";
+import type { Model } from "mongoose";
 
 export interface IUser {
   id: string;
@@ -10,7 +10,7 @@ export interface IUser {
   isEmailVerified: boolean;
 }
 
-export interface IToken extends Document {
+export interface IToken {
   token: string;
   user: string;
   type: TokenTypes;

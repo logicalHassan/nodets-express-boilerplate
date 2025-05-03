@@ -21,14 +21,14 @@ export interface IToken extends Document {
 export type TokenTypes = (typeof tokenTypes)[keyof typeof tokenTypes];
 
 export interface PaginatedModel<T> extends Model<T> {
-  paginate(options: PaginateOptions, filters: PaginationFilters<T>): Promise<PaginateResult<T>>;
+  paginate(options: PaginationOptions, filters: PaginationFilters<T>): Promise<PaginateResult<T>>;
 }
 
 export type PaginationFilters<T> = Partial<{
   [K in keyof T]: string | number;
 }>;
 
-export interface PaginateOptions {
+export interface PaginationOptions {
   limit?: string;
   page?: string;
   sortBy?: string;

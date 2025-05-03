@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import User from '@/models/user.model';
-import { IUser, PaginateOptions, PaginationFilters } from '@/types';
+import { IUser, PaginationOptions, PaginationFilters } from '@/types';
 import { ApiError } from '@/utils';
 
 const isEmailTaken = async (email: string, excludeUserId?: string) => {
@@ -15,7 +15,7 @@ const createUser = async (userBody: IUser) => {
   return User.create(userBody);
 };
 
-const queryUsers = async (options: PaginateOptions, filters: PaginationFilters<IUser>) => {
+const queryUsers = async (options: PaginationOptions, filters: PaginationFilters<IUser>) => {
   return await User.paginate(options, filters);
 };
 

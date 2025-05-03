@@ -36,7 +36,4 @@ const unexpectedErrorHandler = (error: any) => {
 
 process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
-
-process.on('SIGTERM', () => {
-  exitHandler();
-});
+process.on('SIGTERM', exitHandler);

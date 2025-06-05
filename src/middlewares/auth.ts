@@ -1,7 +1,7 @@
 import { env } from '@/config';
 import { tokenTypes } from '@/config/tokens';
 import { userService } from '@/services';
-import { ApiError } from '@/utils/ApiError';
+import { ApiError } from '@/utils/api-error';
 import type { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';

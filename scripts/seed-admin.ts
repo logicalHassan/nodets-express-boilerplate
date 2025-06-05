@@ -1,8 +1,8 @@
 import readline from 'node:readline';
-import { env } from '@/config';
-import User from '@/models/user.model';
-import type { IUser } from '@/types';
 import mongoose from 'mongoose';
+import { env } from '../src/config';
+import User from '../src/models/user.model';
+import type { IUser } from '../src/types';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -14,7 +14,7 @@ const adminDetails: Partial<IUser> = {
   role: 'admin',
 };
 
-async function seedDatabase() {
+async function createOrReplaceAdmin() {
   try {
     await mongoose.connect(env.mongoose.url);
     console.log('Database connected');
@@ -36,17 +36,17 @@ async function seedDatabase() {
   }
 }
 
-async function promptForAdminDetails() {
+async function askAdminCredentials() {
   rl.question('Enter admin email: ', (email) => {
     adminDetails.email = email;
 
     rl.question('Enter admin password: ', (password) => {
       adminDetails.password = password;
 
-      seedDatabase();
+      createOrReplaceAdmin();
       rl.close();
     });
   });
 }
 
-promptForAdminDetails();
+askAdminCredentials();

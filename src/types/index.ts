@@ -1,20 +1,23 @@
+import type { rolesAllowed } from '@/config';
 import type { tokenTypes } from '@/config/tokens';
 import type { Request } from 'express';
 import type { JwtPayload as BaseJwtPayload } from 'jsonwebtoken';
 import type { Model } from 'mongoose';
+
+type UserRole = (typeof rolesAllowed)[number];
 
 export interface IUser {
   id: string;
   name: string;
   email: string;
   password: string;
-  role: string;
+  role: UserRole;
   isEmailVerified: boolean;
 }
 
 export interface IToken {
   token: string;
-  user: string;
+  user: string; //userId
   type: TokenTypes;
   expires: Date;
   blacklisted: boolean;
@@ -58,7 +61,7 @@ export interface CreateUserPaylaod {
   email: string;
   password: string;
   name: string;
-  role?: string;
+  role?: UserRole;
 }
 
 export interface UpdatePasswordPayload {

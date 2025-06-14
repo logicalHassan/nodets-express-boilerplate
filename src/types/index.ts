@@ -60,3 +60,8 @@ export interface CreateUserPaylaod {
   name: string;
   role?: string;
 }
+
+export interface UpdatePasswordPayload {
+  oldPassword: string;
+  newPassword: string;
+}

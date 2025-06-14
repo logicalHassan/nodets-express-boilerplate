@@ -1,6 +1,7 @@
 import User from '@/models/user.model';
-import type { CreateUserPaylaod, IUser, PaginationFilters, PaginationOptions } from '@/types';
+import type { CreateUserPaylaod, IUser, PaginationFilters, PaginationOptions, UpdatePasswordPayload } from '@/types';
 import { ApiError } from '@/utils';
+import { comparePassword } from '@/utils/password-hash';
 import httpStatus from 'http-status';
 
 const isEmailTaken = async (email: string, excludeUserId?: string) => {
@@ -33,6 +34,16 @@ const getUserByEmail = async (email: string) => {
   return User.findOne({ email });
 };
 
+const updatePassword = async (userId: string, requestBody: UpdatePasswordPayload) => {
+  const { oldPassword, newPassword } = requestBody;
+  const user = await getUserById(userId);
+  if (!(await comparePassword(oldPassword, user.password))) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect password');
+  }
+  const updatedUser = await updateUserById(userId, { password: newPassword });
+  return updatedUser;
+};
+
 const updateUserById = async (userId: string, updateBody: Partial<IUser>) => {
   const user = await getUserById(userId);
 
@@ -60,6 +71,7 @@ export default {
   queryUsers,
   getUserById,
   getUserByEmail,
+  updatePassword,
   updateUserById,
   deleteUserById,
 };

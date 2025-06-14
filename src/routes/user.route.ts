@@ -13,6 +13,11 @@ router
   .get(auth([ADMIN]), validate(userValidation.getUsers), userController.getUsers);
 
 router
+  .route('/profile')
+  .get(auth(), userController.getUserProfile)
+  .patch(auth(), validate(userValidation.updateProfile), userController.updateUserProfile);
+
+router
   .route('/:userId')
   .get(auth(), validate(userValidation.getUser), userController.getUser)
   .patch(auth([ADMIN]), validate(userValidation.updateUser), userController.updateUser)

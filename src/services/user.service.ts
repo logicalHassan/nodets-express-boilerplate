@@ -1,5 +1,5 @@
 import User from '@/models/user.model';
-import type { IUser, PaginationFilters, PaginationOptions } from '@/types';
+import type { CreateUserPaylaod, IUser, PaginationFilters, PaginationOptions } from '@/types';
 import { ApiError } from '@/utils';
 import httpStatus from 'http-status';
 
@@ -8,7 +8,7 @@ const isEmailTaken = async (email: string, excludeUserId?: string) => {
   return !!user;
 };
 
-const createUser = async (userBody: IUser) => {
+const createUser = async (userBody: CreateUserPaylaod) => {
   if (await isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }

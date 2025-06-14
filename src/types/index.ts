@@ -53,3 +53,10 @@ export interface AppJwtPayload extends BaseJwtPayload {
   sub: string;
   type: string;
 }
+
+export interface CreateUserPaylaod {
+  email: string;
+  password: string;
+  name: string;
+  role?: string;
+}

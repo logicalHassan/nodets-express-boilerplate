@@ -1,7 +1,13 @@
-import { authService, emailService, tokenService } from '@/services';
+import { authService, emailService, tokenService, userService } from '@/services';
 import type { AuthedReq } from '@/types';
 import type { RequestHandler } from 'express';
 import httpStatus from 'http-status';
+
+const register: RequestHandler = async (req, res) => {
+  const user = await userService.createUser(req.body);
+  const tokens = await tokenService.generateAuthTokens(user);
+  res.status(httpStatus.CREATED).send({ user, tokens });
+};
 
 const login: RequestHandler = async (req, res) => {
   const { email, password } = req.body;
@@ -45,6 +51,7 @@ const verifyEmail: RequestHandler = async (req, res) => {
 };
 
 export default {
+  register,
   login,
   logout,
   refreshTokens,

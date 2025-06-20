@@ -1,16 +1,18 @@
 import { authService, emailService, tokenService, userService } from '@/services';
 import type { AuthedReq } from '@/types';
+import type { ForgotPasswordBody, LoginBody, RegisterBody } from '@/types/validation.types';
 import type { RequestHandler } from 'express';
 import httpStatus from 'http-status';
 
 const register: RequestHandler = async (req, res) => {
-  const user = await userService.createUser(req.body);
+  const payload = req.body as RegisterBody;
+  const user = await userService.createUser(payload);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
 };
 
 const login: RequestHandler = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body as LoginBody;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   res.send({ user, tokens });
@@ -22,8 +24,9 @@ const logout: RequestHandler = async (req, res) => {
 };
 
 const forgotPassword: RequestHandler = async (req, res) => {
-  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
-  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  const { email } = req.body as ForgotPasswordBody;
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(email);
+  await emailService.sendResetPasswordEmail(email, resetPasswordToken);
   res.status(httpStatus.NO_CONTENT).send();
 };
 

@@ -34,6 +34,15 @@ const unexpectedErrorHandler = (error: unknown) => {
   exitHandler();
 };
 
+const shutDown = async () => {
+  if (server) {
+    server.close();
+  }
+  await mongoose.connection.close();
+  process.exit(0);
+};
+
 process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
-process.on('SIGTERM', exitHandler);
+process.on('SIGTERM', shutDown);
+process.on('SIGINT', shutDown);

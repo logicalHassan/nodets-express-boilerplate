@@ -1,5 +1,6 @@
-import { env } from '@/config/env';
 import winston from 'winston';
+
+const mode = process.env.NODE_ENV;
 
 const enumerateErrorFormat = winston.format((info) => {
   if (info instanceof Error) {
@@ -9,10 +10,10 @@ const enumerateErrorFormat = winston.format((info) => {
 });
 
 export const logger = winston.createLogger({
-  level: env.mode === 'development' ? 'debug' : 'info',
+  level: mode === 'development' ? 'debug' : 'info',
   format: winston.format.combine(
     enumerateErrorFormat(),
-    env.mode === 'development' ? winston.format.colorize() : winston.format.uncolorize(),
+    mode === 'development' ? winston.format.colorize() : winston.format.uncolorize(),
     winston.format.splat(),
     winston.format.printf(({ level, message }) => `${level}: ${message}`),
   ),

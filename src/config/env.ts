@@ -1,35 +1,41 @@
 import path from 'node:path';
 import dotenv from 'dotenv';
-import Joi from 'joi';
+import { z } from 'zod';
+import { logger } from './logger';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-const envVarsSchema = Joi.object()
-  .keys({
-    NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
-    PORT: Joi.number().default(3000),
-    MONGO_URI: Joi.string().required(),
-    JWT_SECRET: Joi.string().required().description('JWT secret key'),
-    JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
-    JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
-    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
-      .default(10)
-      .description('minutes after which reset password token expires'),
-    JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: Joi.number(),
-    SMTP_HOST: Joi.string(),
-    SMTP_PORT: Joi.number(),
-    SMTP_USERNAME: Joi.string(),
-    SMTP_PASSWORD: Joi.string(),
-    EMAIL_FROM: Joi.string(),
-    FRONTEND_URL: Joi.string().required(),
-  })
-  .unknown();
+const envVarsSchema = z.object({
+  NODE_ENV: z.enum(['production', 'development', 'test']),
+  PORT: z.coerce.number().default(3000),
+  MONGO_URI: z.string().min(1, 'MONGO_URI is required'),
+  JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
+  JWT_ACCESS_EXPIRATION_MINUTES: z.coerce.number().default(30),
+  JWT_REFRESH_EXPIRATION_DAYS: z.coerce.number().default(30),
+  JWT_RESET_PASSWORD_EXPIRATION_MINUTES: z.coerce.number().default(10),
+  JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: z.coerce.number().default(10),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional(),
+  SMTP_USERNAME: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
+  FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL'),
+});
 
-const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);
+const result = envVarsSchema.safeParse(process.env);
 
-if (error) {
-  throw new Error(`Config validation error: ${error.message}`);
+if (!result.success) {
+  logger.error('Misconfigured environment variables:');
+
+  for (const issue of result.error.issues) {
+    const path = issue.path.join('.') || '(root)';
+    console.log(`  • ${path}: ${issue.message}`);
+  }
+
+  process.exit(1);
 }
+
+const envVars = result.data;
 
 export const env = {
   mode: envVars.NODE_ENV,

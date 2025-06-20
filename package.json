@@ -6,7 +6,7 @@
     "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=false src/index.ts",
     "build": "tsc --noEmit && tsup",
     "start": "pm2 start ecosystem.config.json --no-daemon",
-    "start:dev": "cross-env NODE_ENV=development tsc && tsx src/index",
+    "start:dev": "tsc && cross-env NODE_ENV=development tsx watch src/index",
     "clean": "rm -rf dist",
     "format": "biome format ./src --write",
     "lint": "biome lint ./src",

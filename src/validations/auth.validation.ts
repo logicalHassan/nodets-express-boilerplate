@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { isPassword } from './custom.validation';
 
-export const register = {
+const register = {
   body: z.object({
     name: z
       .string()

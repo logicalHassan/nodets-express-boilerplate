@@ -38,11 +38,12 @@ const shutDown = async () => {
   if (server) {
     server.close();
   }
-  await mongoose.connection.close();
+
+  logger.info('Shutting down gracefully...');
+  await mongoose.disconnect();
   process.exit(0);
 };
 
 process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
 process.on('SIGTERM', shutDown);
-process.on('SIGINT', shutDown);

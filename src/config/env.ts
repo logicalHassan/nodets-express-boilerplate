@@ -29,7 +29,7 @@ if (!result.success) {
 
   for (const issue of result.error.issues) {
     const path = issue.path.join('.') || '(root)';
-    console.log(`  • ${path}: ${issue.message}`);
+    logger.error(`${path}: ${issue.message}`);
   }
 
   process.exit(1);

@@ -5,7 +5,7 @@ import validator from 'validator';
 import paginate from './plugins/paginate';
 import toJSON from './plugins/toJSON';
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema(
   {
     name: {
       type: String,

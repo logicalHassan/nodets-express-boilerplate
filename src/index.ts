@@ -6,22 +6,26 @@ import { logger } from './config/logger';
 
 let server: Server;
 
-mongoose
-  .connect(env.mongoose.url)
-  .then(() => {
+async function startServer() {
+  try {
+    await mongoose.connect(env.mongoose.url);
     logger.info('Connected to MongoDB');
+
     server = app.listen(env.port, () => {
-      logger.info(`Listening to port ${env.port}`);
+      logger.info(`Listening on port ${env.port}`);
     });
-  })
-  .catch(() => {
-    logger.error('Error connecting to MongoDB');
+  } catch (error) {
+    logger.error('Error starting server:', error);
     process.exit(1);
-  });
+  }
+}
+
+void startServer();
 
 const exitHandler = () => {
   if (server) {
     server.close(() => {
+      logger.info('Server closed');
       process.exit(1);
     });
   } else {
@@ -34,16 +38,12 @@ const unexpectedErrorHandler = (error: unknown) => {
   exitHandler();
 };
 
-const shutDown = async () => {
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', unexpectedErrorHandler);
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received');
   if (server) {
     server.close();
   }
-
-  logger.info('Shutting down gracefully...');
-  await mongoose.disconnect();
-  process.exit(0);
-};
-
-process.on('uncaughtException', unexpectedErrorHandler);
-process.on('unhandledRejection', unexpectedErrorHandler);
-process.on('SIGTERM', shutDown);
+});

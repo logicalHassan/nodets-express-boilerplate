@@ -1,6 +1,6 @@
 import { z as baseZ } from 'zod';
 
-const z = {
+export const strictZod = {
   ...baseZ,
 
   /**
@@ -10,5 +10,3 @@ const z = {
    */
   object: <T extends baseZ.ZodRawShape>(shape: T) => baseZ.object(shape).strict(),
 };
-
-export { z };

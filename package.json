@@ -11,6 +11,7 @@
     "format": "biome format --write",
     "lint": "biome lint ",
     "lint:fix": "biome lint --write",
+    "add:env": "tsx ./scripts/add-env.ts",
     "seed:admin": "tsx ./scripts/seed-admin.ts",
     "prepare": "husky",
     "generate": "plop"

@@ -45,6 +45,8 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@biomejs/biome": "^1.9.4",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",

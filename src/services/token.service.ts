@@ -6,9 +6,15 @@ import { ApiError } from '@/utils';
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import type { Types } from 'mongoose';
 import userService from './user.service';
 
-const generateToken = (userId: string, expires: moment.Moment, type: TokenTypes, secret = env.jwt.secret) => {
+const generateToken = (
+  userId: string | Types.ObjectId,
+  expires: moment.Moment,
+  type: TokenTypes,
+  secret = env.jwt.secret,
+) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
@@ -20,7 +26,7 @@ const generateToken = (userId: string, expires: moment.Moment, type: TokenTypes,
 
 const saveToken = async (
   token: string,
-  userId: string,
+  userId: string | Types.ObjectId,
   expires: moment.Moment,
   type: TokenTypes,
   blacklisted = false,

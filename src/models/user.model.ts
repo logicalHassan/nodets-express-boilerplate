@@ -28,6 +28,7 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+      private: true,
       minlength: 8,
       validate: {
         validator: (value: string) => /\d/.test(value) && /[a-zA-Z]/.test(value),

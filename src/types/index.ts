@@ -2,11 +2,12 @@ import type { rolesAllowed } from '@/config';
 import type { tokenTypes } from '@/config/tokens';
 import type { Request } from 'express';
 import type { JwtPayload as BaseJwtPayload } from 'jsonwebtoken';
-import type { Model } from 'mongoose';
+import type { Model, Types } from 'mongoose';
 
 type UserRole = (typeof rolesAllowed)[number];
 
 export interface IUser {
+  _id: Types.ObjectId;
   id: string;
   name: string;
   email: string;

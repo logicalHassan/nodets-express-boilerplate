@@ -1,12 +1,12 @@
 import { ApiError, pick } from '@/utils';
 import type { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
-import type { ZodTypeAny } from 'zod';
+import type { ZodType } from 'zod';
 
 type SchemaObject = {
-  params?: ZodTypeAny;
-  query?: ZodTypeAny;
-  body?: ZodTypeAny;
+  params?: ZodType<unknown>;
+  query?: ZodType<unknown>;
+  body?: ZodType<unknown>;
 };
 
 const validate = (schema: SchemaObject) => (req: Request, _res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import { strictZod as z } from '@/utils/strict-zod';
+import z from 'zod';
 import { isPassword } from './custom.validation';
 
 const register = {
@@ -7,14 +7,14 @@ const register = {
       .string()
       .min(3, { message: 'Name must be at least 3 characters long' })
       .max(20, { message: 'Name must be at most 20 characters long' }),
-    email: z.string().email(),
+    email: z.email(),
     password: isPassword,
   }),
 };
 
 const login = {
   body: z.object({
-    email: z.string().email(),
+    email: z.email(),
     password: z.string(),
   }),
 };
@@ -33,7 +33,7 @@ const refreshTokens = {
 
 const forgotPassword = {
   body: z.object({
-    email: z.string().email(),
+    email: z.email(),
   }),
 };
 

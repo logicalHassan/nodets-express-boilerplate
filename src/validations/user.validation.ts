@@ -1,10 +1,10 @@
 import { rolesAllowed } from '@/config';
-import { strictZod as z } from '@/utils/strict-zod';
+import z from 'zod';
 import { isObjectId, isPassword } from './custom.validation';
 
 const createUser = {
   body: z.object({
-    email: z.string().email(),
+    email: z.email(),
     password: isPassword,
     name: z.string(),
     role: z.enum(rolesAllowed),
@@ -46,7 +46,7 @@ const updateUser = {
   }),
   body: z
     .object({
-      email: z.string().email().optional(),
+      email: z.email().optional(),
       password: isPassword.optional(),
       name: z.string().optional(),
     })

@@ -19,7 +19,7 @@ const envVarsSchema = z.object({
   SMTP_USERNAME: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
-  FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL'),
+  FRONTEND_URL: z.url('FRONTEND_URL must be a valid URL'),
 });
 
 const result = envVarsSchema.safeParse(process.env);

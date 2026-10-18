@@ -1,54 +1,63 @@
 import { authService, emailService, tokenService, userService } from '@/services';
-import type { AuthedReq } from '@/types';
-import type { ForgotPasswordBody, LoginBody, RegisterBody } from '@/types/validation.types';
-import type { RequestHandler } from 'express';
+import type { Controller } from '@/types';
+import type {
+  ForgotPasswordBody,
+  LoginBody,
+  RefreshTokensBody,
+  RegisterBody,
+  ResetPasswordBody,
+  ResetPasswordQuery,
+  VerifyEmailQuery,
+} from '@/validations/auth.validation';
 import httpStatus from 'http-status';
 
-const register: RequestHandler = async (req, res) => {
-  const payload = req.body as RegisterBody;
+const register: Controller<{ body: RegisterBody }> = async (req, res) => {
+  const payload = req.body;
+
   const user = await userService.createUser(payload);
   const tokens = await tokenService.generateAuthTokens(user);
+
   res.status(httpStatus.CREATED).send({ user, tokens });
 };
 
-const login: RequestHandler = async (req, res) => {
-  const { email, password } = req.body as LoginBody;
+const login: Controller<{ body: LoginBody }> = async (req, res) => {
+  const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   res.send({ user, tokens });
 };
 
-const logout: RequestHandler = async (req, res) => {
+const logout: Controller<{ body: RefreshTokensBody }> = async (req, res) => {
   await authService.logout(req.body.refreshToken);
   res.status(httpStatus.NO_CONTENT).send();
 };
 
-const forgotPassword: RequestHandler = async (req, res) => {
-  const { email } = req.body as ForgotPasswordBody;
+const forgotPassword: Controller<{ body: ForgotPasswordBody }> = async (req, res) => {
+  const { email } = req.body;
   const resetPasswordToken = await tokenService.generateResetPasswordToken(email);
   await emailService.sendResetPasswordEmail(email, resetPasswordToken);
   res.status(httpStatus.NO_CONTENT).send();
 };
 
-const refreshTokens: RequestHandler = async (req, res) => {
+const refreshTokens: Controller<{ body: RefreshTokensBody }> = async (req, res) => {
   const tokens = await authService.refreshAuth(req.body.refreshToken);
-  res.send({ ...tokens });
+  res.send({ tokens });
 };
 
-const resetPassword: RequestHandler = async (req, res) => {
-  const updatedUser = await authService.resetPassword(req.query.token as string, req.body.password);
+const resetPassword: Controller<{ query: ResetPasswordQuery; body: ResetPasswordBody }> = async (req, res) => {
+  const updatedUser = await authService.resetPassword(req.query.token, req.body.password);
   await emailService.sendPasswordRestSuccessEmail(updatedUser.email);
   res.status(httpStatus.NO_CONTENT).send();
 };
 
-const sendVerificationEmail: RequestHandler = async (req, res) => {
-  const user = (req as AuthedReq).user;
+const sendVerificationEmail: Controller = async (req, res) => {
+  const user = req.user;
   const verifyEmailToken = await tokenService.generateVerifyEmailToken(user);
   await emailService.sendVerificationEmail(user.email, verifyEmailToken);
   res.status(httpStatus.NO_CONTENT).send();
 };
 
-const verifyEmail: RequestHandler = async (req, res) => {
+const verifyEmail: Controller<{ query: VerifyEmailQuery }> = async (req, res) => {
   await authService.verifyEmail(req.query.token as string);
   res.status(httpStatus.NO_CONTENT).send();
 };

@@ -1,6 +1,6 @@
 import type { rolesAllowed } from '@/config';
 import type { tokenTypes } from '@/config/tokens';
-import type { Request } from 'express';
+import type { Request, RequestHandler } from 'express';
 import type { JwtPayload as BaseJwtPayload } from 'jsonwebtoken';
 import type { Model, Types } from 'mongoose';
 
@@ -69,3 +69,18 @@ export interface UpdatePasswordPayload {
   oldPassword: string;
   newPassword: string;
 }
+
+interface ApiContract {
+  body?: unknown;
+  query?: unknown;
+  params?: unknown;
+  response?: unknown;
+}
+
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+export type Controller<T extends ApiContract = {}> = RequestHandler<
+  T['params'] extends undefined ? Record<string, string> : T['params'],
+  T['response'] extends undefined ? unknown : T['response'],
+  T['body'] extends undefined ? unknown : T['body'],
+  T['query'] extends undefined ? unknown : T['query']
+>;

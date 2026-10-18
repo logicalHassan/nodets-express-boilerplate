@@ -1,4 +1,2 @@
-import authValidation from './auth.validation';
-import userValidation from './user.validation';
-
-export { authValidation, userValidation };
+export { authValidation } from './auth.validation';
+export { userValidation } from './user.validation';

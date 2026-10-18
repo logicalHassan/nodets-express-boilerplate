@@ -1,33 +1,37 @@
 import userService from '@/services/user.service';
-import type { AuthedReq } from '@/types';
-import type { GetUsersQuery, UpdateProfileBody } from '@/types/validation.types';
+import type { Controller } from '@/types';
 import { pick } from '@/utils';
-import type { RequestHandler } from 'express';
+import type {
+  CreateUserBody,
+  GetUsersQuery,
+  UpdateProfileBody,
+  UpdateUserBody,
+  UserIdParams,
+} from '@/validations/user.validation';
 import httpStatus from 'http-status';
 
-const createUser: RequestHandler = async (req, res) => {
+const createUser: Controller<{ body: CreateUserBody }> = async (req, res) => {
   const user = await userService.createUser(req.body);
   res.status(httpStatus.CREATED).send(user);
 };
 
-const getUsers: RequestHandler = async (req, res) => {
-  const query = req.query as GetUsersQuery;
-  const filter = pick(query, ['name', 'role']);
-  const options = pick(query, ['sortBy', 'limit', 'page']);
+const getUsers: Controller<{ query: GetUsersQuery }> = async (req, res) => {
+  const filter = pick(req.query, ['name', 'role']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
 
   const result = await userService.queryUsers(options, filter);
   res.send(result);
 };
 
-const getUserProfile: RequestHandler = async (req, res) => {
-  const userId = (req as AuthedReq).user.id;
+const getUserProfile: Controller = async (req, res) => {
+  const userId = req.user.id;
   const user = await userService.getUserById(userId);
   res.status(httpStatus.OK).send(user);
 };
 
-const updateUserProfile: RequestHandler = async (req, res) => {
-  const { id: userId } = (req as AuthedReq).user;
-  const { newPassword, oldPassword, ...rest } = req.body as UpdateProfileBody;
+const updateUserProfile: Controller<{ body: UpdateProfileBody }> = async (req, res) => {
+  const { id: userId } = req.user;
+  const { newPassword, oldPassword, ...rest } = req.body;
 
   const updatedUser =
     newPassword && oldPassword
@@ -40,17 +44,17 @@ const updateUserProfile: RequestHandler = async (req, res) => {
   res.send(updatedUser);
 };
 
-const getUser: RequestHandler = async (req, res) => {
+const getUser: Controller<{ params: UserIdParams }> = async (req, res) => {
   const user = await userService.getUserById(req.params.userId);
-  res.send(user);
+  res.send({ user });
 };
 
-const updateUser: RequestHandler = async (req, res) => {
+const updateUser: Controller<{ params: UserIdParams; body: UpdateUserBody }> = async (req, res) => {
   const user = await userService.updateUserById(req.params.userId, req.body);
   res.send(user);
 };
 
-const deleteUser: RequestHandler = async (req, res) => {
+const deleteUser: Controller<{ params: UserIdParams }> = async (req, res) => {
   await userService.deleteUserById(req.params.userId);
   res.status(httpStatus.NO_CONTENT).send();
 };
